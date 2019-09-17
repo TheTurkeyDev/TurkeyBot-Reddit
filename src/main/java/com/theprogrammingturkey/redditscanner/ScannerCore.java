@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -36,7 +37,7 @@ public class ScannerCore implements IServiceCore
 	public void init()
 	{
 		commentScanner = new ScannerThread();
-		
+
 		try
 		{
 			File config = new File(ServiceManager.getConfigFolder().getPath() + "/turkeybot-reddit-config.json");
@@ -54,10 +55,13 @@ public class ScannerCore implements IServiceCore
 					result.append(line);
 				reader.close();
 				JsonObject json = JSON.parse(result.toString()).getAsJsonObject();
-				for(JsonElement keyword: json.getAsJsonArray("keywords"))
+				for(JsonElement keyword : json.getAsJsonArray("keywords"))
 					commentScanner.keywords.add(keyword.getAsString());
-				for(JsonElement subreddit: json.getAsJsonArray("subreddits"))
+				ServerCore.output(Level.Info, "Reddit Bot", "Tracking keywords: " + Arrays.toString(commentScanner.keywords.toArray(new String[0])));
+
+				for(JsonElement subreddit : json.getAsJsonArray("subreddits"))
 					commentScanner.subReddits.add(subreddit.getAsString());
+				ServerCore.output(Level.Info, "Reddit Bot", "Tracking subreddits: " + Arrays.toString(commentScanner.subReddits.toArray(new String[0])));
 			}
 		} catch(Exception e)
 		{
